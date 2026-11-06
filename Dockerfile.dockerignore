@@ -1,0 +1,9 @@
+# Исключения для контекста сборки app (корень do-not-forget). BuildKit берёт их из <Dockerfile>.dockerignore
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+**/.git
+**/.DS_Store
+frontend-react-native
+frontend-web

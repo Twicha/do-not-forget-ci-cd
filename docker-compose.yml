@@ -1,6 +1,12 @@
+# Запускать из этой папки (ci-cd). name закреплён, чтобы volume'ы остались do-not-forget_* (база, сессии, сертификаты)
+name: do-not-forget
+
 services:
   app:
-    build: .
+    # Контекст — корень do-not-forget: Dockerfile копирует backend/
+    build:
+      context: ..
+      dockerfile: ci-cd/Dockerfile
     restart: unless-stopped
     env_file: .env
     environment:
@@ -12,6 +18,13 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+
+  web:
+    build: ../frontend-web
+    restart: unless-stopped
+    environment:
+      # Полный адрес сайта для sitemap.xml, например https://example.ru
+      SITE_URL: ${SITE_URL:-}
 
   postgres:
     image: postgres:16
@@ -51,6 +64,7 @@ services:
       - caddy_config:/config
     depends_on:
       - app
+      - web
 
 volumes:
   pgdata:
