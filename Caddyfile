@@ -1,0 +1,11 @@
+{
+	servers {
+		# tuna и docker-сеть — частные адреса: доверяем их X-Forwarded-For, чтобы до app дошёл реальный IP клиента
+		trusted_proxies static private_ranges
+	}
+}
+
+{$SITE_ADDRESS} {
+	encode gzip
+	reverse_proxy app:4200
+}
