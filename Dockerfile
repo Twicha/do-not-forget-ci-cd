@@ -3,7 +3,8 @@ FROM node:20-slim AS api
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY backend/package*.json ./
-RUN npm ci
+# Кэш npm переживает сборки. Часть соединений к registry.npmjs.org с VPS виснет: короткий таймаут и быстрые повторы вместо 5 минут ожидания
+RUN --mount=type=cache,target=/root/.npm npm ci --prefer-offline --no-audit --no-fund --fetch-timeout=30000 --fetch-retries=5 --fetch-retry-mintimeout=2000 --fetch-retry-maxtimeout=10000
 COPY backend/ ./
 RUN npx prisma generate && npm run build && npm prune --omit=dev
 
